@@ -7,7 +7,8 @@ const Razorpay = require('razorpay');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const { Readable } = require('stream');
-const credentials = require('./cred/Student.json'); // ✅ correct and secured
+//const credentials = require('./cred/Student.json'); // ✅ correct and secured
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
 
 const app = express();
