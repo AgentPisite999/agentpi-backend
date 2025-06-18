@@ -7,9 +7,7 @@ const Razorpay = require('razorpay');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const { Readable } = require('stream');
-//const credentials = require('./cred/Student.json'); // ✅ correct and secured
-const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-
+const credentials = require('./cred/Student.json');
 
 const app = express();
 app.use(cors());
@@ -39,9 +37,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ Log Login
+// ✅ Safe Log Endpoint (works even if name/email not provided)
 app.post('/log', async (req, res) => {
   const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(200).send({ status: 'skipped', message: 'Missing name or email' });
+  }
+
   try {
     const client = await auth.getClient();
     const sheets = google.sheets({ version: 'v4', auth: client });
@@ -220,8 +223,7 @@ app.post('/screening', upload.single('resume'), async (req, res) => {
   }
 });
 
-// ✅ Check screening by login email
-// ✅ Get all screenings by email (used in frontend)
+// ✅ Get all screenings for email
 app.get('/all-screenings/:email', async (req, res) => {
   const email = req.params.email.toLowerCase();
   try {
@@ -257,8 +259,7 @@ app.get('/all-screenings/:email', async (req, res) => {
   }
 });
 
-
-// ✅ Check enrollments by login email
+// ✅ Check Enrollments by Email
 app.get('/check-enrollment/:email', async (req, res) => {
   const email = decodeURIComponent(req.params.email).toLowerCase();
   try {
@@ -295,7 +296,7 @@ app.get('/check-enrollment/:email', async (req, res) => {
   }
 });
 
-// ✅ Get student info by Enrollment ID (used before payment)
+// ✅ Get Student Details for Payment
 app.get('/get-student/:id', async (req, res) => {
   const enrollmentId = req.params.id;
 
