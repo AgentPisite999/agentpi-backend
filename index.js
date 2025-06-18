@@ -7,7 +7,10 @@ const Razorpay = require('razorpay');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const { Readable } = require('stream');
-const credentials = require('./cred/Student.json');
+//const credentials = require('./cred/Student.json');
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS); // ✅ Works with Render env var
+
+
 
 const app = express();
 app.use(cors());
